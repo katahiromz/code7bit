@@ -40,11 +40,11 @@ const char g_utf8_bom[] = "\xEF\xBB\xBF";
 const char g_utf16_be_bom[] = "\xFE\xFF";
 const char g_utf16_le_bom[] = "\xFF\xFE";
 
-std::string g_strHeader1 =
+std::string g_strHeaderLF =
     "// This file is converted by code7bit.\n"
     "// code7bit: https://github.com/katahiromz/code7bit\n"
     "// To revert conversion, please execute \"code7bit -r <file>\".\n";
-std::string g_strHeader2 =
+std::string g_strHeaderCRLF =
     "// This file is converted by code7bit.\r\n"
     "// code7bit: https://github.com/katahiromz/code7bit\r\n"
     "// To revert conversion, please execute \"code7bit -r <file>\".\r\n";
@@ -315,24 +315,24 @@ bool do_convert(const char *file, std::string& contents, bool check_only, bool& 
     }
 
     // delete header
-    if (contents.size() >= g_strHeader1.size() &&
-        memcmp(&contents[0], &g_strHeader1[0], g_strHeader1.size()) == 0)
+    if (contents.size() >= g_strHeaderLF.size() &&
+        memcmp(&contents[0], &g_strHeaderLF[0], g_strHeaderLF.size()) == 0)
     {
-        contents.erase(0, g_strHeader1.size());
+        contents.erase(0, g_strHeaderLF.size());
     }
-    else if (contents.size() >= g_strHeader2.size() &&
-             memcmp(&contents[0], &g_strHeader2[0], g_strHeader2.size()) == 0)
+    else if (contents.size() >= g_strHeaderCRLF.size() &&
+             memcmp(&contents[0], &g_strHeaderCRLF[0], g_strHeaderCRLF.size()) == 0)
     {
-        contents.erase(0, g_strHeader2.size());
+        contents.erase(0, g_strHeaderCRLF.size());
     }
 
     // add header
     if (!g_no_header)
     {
         if (contents.find("\r\n") != std::string::npos)
-            contents.insert(0, g_strHeader2);
+            contents.insert(0, g_strHeaderCRLF);
         else
-            contents.insert(0, g_strHeader1);
+            contents.insert(0, g_strHeaderLF);
     }
 
     // do backup
@@ -420,15 +420,15 @@ bool do_reverse(const char *file, std::string& contents, bool check_only, bool& 
     }
 
     // delete header
-    if (contents.size() >= g_strHeader1.size() &&
-        memcmp(&contents[0], &g_strHeader1[0], g_strHeader1.size()) == 0)
+    if (contents.size() >= g_strHeaderLF.size() &&
+        memcmp(&contents[0], &g_strHeaderLF[0], g_strHeaderLF.size()) == 0)
     {
-        contents.erase(0, g_strHeader1.size());
+        contents.erase(0, g_strHeaderLF.size());
     }
-    else if (contents.size() >= g_strHeader2.size() &&
-             memcmp(&contents[0], &g_strHeader2[0], g_strHeader2.size()) == 0)
+    else if (contents.size() >= g_strHeaderCRLF.size() &&
+             memcmp(&contents[0], &g_strHeaderCRLF[0], g_strHeaderCRLF.size()) == 0)
     {
-        contents.erase(0, g_strHeader2.size());
+        contents.erase(0, g_strHeaderCRLF.size());
     }
 
     // reverse conversion
