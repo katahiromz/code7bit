@@ -57,10 +57,7 @@ enum RET
 // show version info
 void show_version(void)
 {
-    std::cout << 
-        "######################################\n"
-        "# code7bit version 1.0 by katahiromz #\n"
-        "######################################" << std::endl;
+    std::cout <<  "/* code7bit version 1.1 by katahiromz */" << std::endl;
 }
 
 // show help
@@ -337,7 +334,7 @@ bool do_convert(const char *file, std::string& contents, bool check_only, bool& 
     }
 
     // do backup
-    if (g_backup && !do_backup(file))
+    if (!do_backup(file))
     {
         return false;
     }
@@ -352,8 +349,11 @@ bool do_convert(const char *file, std::string& contents, bool check_only, bool& 
     ofs.write(contents.c_str(), contents.size());
     ofs.close();
 
-    // delete backup
-    do_delete_backup(file);
+    if (!g_backup)
+    {
+        // delete backup
+        do_delete_backup(file);
+    }
 
     return true;
 }
@@ -455,7 +455,7 @@ bool do_reverse(const char *file, std::string& contents, bool check_only, bool& 
     }
 
     // do backup
-    if (g_backup && !do_backup(file))
+    if (!do_backup(file))
     {
         return false;
     }
@@ -470,8 +470,11 @@ bool do_reverse(const char *file, std::string& contents, bool check_only, bool& 
     ofs.write(contents.c_str(), contents.size());
     ofs.close();
 
-    // delete backup
-    do_delete_backup(file);
+    if (!g_backup)
+    {
+        // delete backup
+        do_delete_backup(file);
+    }
 
     return true;
 }
