@@ -214,6 +214,11 @@ bool do_delete_backup(const char *file)
     return _unlink(backup_file.c_str()) == 0;
 }
 
+inline bool is_octal(char ch)
+{
+    return '0' <= ch && ch <= '7';
+}
+
 // 8-bit ASCII to 7-bit ASCII
 bool do_convert(const char *file, std::string& contents, bool check_only, bool& has_change)
 {
@@ -246,9 +251,9 @@ bool do_convert(const char *file, std::string& contents, bool check_only, bool& 
         {
             // find "\OOO"
             if (contents[i] == '\\' &&
-                '0' <= contents[i + 1] && contents[i + 1] <= '7' &&
-                '0' <= contents[i + 2] && contents[i + 2] <= '7' &&
-                '0' <= contents[i + 3] && contents[i + 3] <= '7')
+                is_octal(contents[i + 1]) &&
+                is_octal(contents[i + 2]) &&
+                is_octal(contents[i + 3]))
             {
                 std::cerr << file << ": ERROR: Already has octal sequence." << std::endl;
                 return false;
@@ -350,9 +355,9 @@ bool do_reverse(const char *file, std::string& contents, bool check_only, bool& 
         {
             // find "\OOO"
             if (contents[i] == '\\' &&
-                '0' <= contents[i + 1] && contents[i + 1] <= '7' &&
-                '0' <= contents[i + 2] && contents[i + 2] <= '7' &&
-                '0' <= contents[i + 3] && contents[i + 3] <= '7')
+                is_octal(contents[i + 1]) &&
+                is_octal(contents[i + 2]) &&
+                is_octal(contents[i + 3]))
             {
                 has_target = true;
                 break;
@@ -383,9 +388,9 @@ bool do_reverse(const char *file, std::string& contents, bool check_only, bool& 
         {
             // find "\OOO"
             if (contents[i] == '\\' &&
-                '0' <= contents[i + 1] && contents[i + 1] <= '7' &&
-                '0' <= contents[i + 2] && contents[i + 2] <= '7' &&
-                '0' <= contents[i + 3] && contents[i + 3] <= '7')
+                is_octal(contents[i + 1]) &&
+                is_octal(contents[i + 2]) &&
+                is_octal(contents[i + 3]))
             {
                 char ch = contents[i + 1] - '0';
                 ch <<= 3;
