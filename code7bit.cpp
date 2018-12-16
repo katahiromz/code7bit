@@ -59,7 +59,7 @@ enum RET
 // show version info
 void show_version(void)
 {
-    std::cout <<  "/* code7bit version 1.1 by katahiromz */" << std::endl;
+    std::cout <<  "code7bit version 1.2 by katahiromz" << std::endl;
 }
 
 // show help
@@ -174,6 +174,15 @@ int parse_command_line(int argc, char **argv)
     for (int i = optind; i < argc; ++i)
     {
         g_files.push_back(argv[i]);
+    }
+
+    if (g_verbose)
+    {
+        show_version();
+        for (int i = 0; i < argc; ++i)
+        {
+            std::cout << "argv[" << i << "]: " << argv[i] << std::endl;
+        }
     }
 
     return RET_SUCCESS;
@@ -514,8 +523,6 @@ int do_it(void)
 {
     if (g_verbose)
     {
-        show_version();
-
         std::cout << "non-option arguments:" << std::endl;
         for (size_t i = 0; i < g_files.size(); ++i)
         {
