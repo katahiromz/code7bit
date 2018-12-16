@@ -206,6 +206,7 @@ bool do_backup(const char *file)
     }
     if (!ok)
     {
+        unlink(backup_file.c_str());
         std::cerr << file << ": ERROR: Cannot write backup file '"
                   << backup_file << "'." << std::endl;
     }
