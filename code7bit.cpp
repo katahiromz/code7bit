@@ -523,7 +523,6 @@ int do_it(void)
 {
     if (g_verbose)
     {
-        std::cout << "non-option arguments:" << std::endl;
         for (size_t i = 0; i < g_files.size(); ++i)
         {
             std::cout << "g_files[" << (int)i << "]: " << g_files[i] << std::endl;
