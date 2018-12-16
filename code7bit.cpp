@@ -49,7 +49,7 @@ void show_version(void)
 {
     std::cout << 
         "######################################\n"
-        "# code7bit version 0.6 by katahiromz #\n"
+        "# code7bit version 0.8 by katahiromz #\n"
         "######################################" << std::endl;
 }
 
@@ -108,11 +108,6 @@ int parse_command_line(int argc, char **argv)
     {
         switch (opt)
         {
-        case 0:
-            std::cerr << "ERROR: Invalid option." << std::endl;
-            show_help();
-            exit(EXIT_SUCCESS);
-            break;
         case 'h':
             show_help();
             exit(EXIT_SUCCESS);
@@ -144,7 +139,7 @@ int parse_command_line(int argc, char **argv)
                 std::cerr << "ERROR: Invalid option." << std::endl;
                 break;
             default:
-                std::cerr << "ERROR: Invalid option '-" << optopt << "'." << std::endl;
+                std::cerr << "ERROR: Invalid option '-" << (char)optopt << "'." << std::endl;
                 break;
             }
             return RET_INVALID_ARGUMENT;
