@@ -50,7 +50,7 @@ void show_version(void)
     std::cout << 
         "######################################\n"
         "# code7bit version 0.5 by katahiromz #\n"
-        "######################################\n" << std::endl;
+        "######################################" << std::endl;
 }
 
 // show help
@@ -67,7 +67,7 @@ void show_help(void)
         "-r                  Reverse conversion.\n"
         "-v                  Verbose mode.\n"
         "-b                  Create backup for file.\n"
-        "-t                  Do test only.\n" << std::endl;
+        "-t                  Do test only." << std::endl;
 }
 
 // option info for getopt_long
