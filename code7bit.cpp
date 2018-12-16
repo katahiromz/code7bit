@@ -49,7 +49,7 @@ void show_version(void)
 {
     std::cout << 
         "######################################\n"
-        "# code7bit version 0.2 by katahiromz #\n"
+        "# code7bit version 0.3 by katahiromz #\n"
         "######################################\n" << std::endl;
 }
 
@@ -77,7 +77,7 @@ struct option opts[] =
     { "version", no_argument, NULL, 'V' },
     { "convert", no_argument, NULL, 'c' },
     { "reverse", no_argument, NULL, 'r' },
-    { "verbose", no_argument, NULL, 'V' },
+    { "verbose", no_argument, NULL, 'v' },
     { "backup", no_argument, NULL, 'b' },
     { "test", no_argument, NULL, 't' },
     { NULL, 0, NULL, 0 },
