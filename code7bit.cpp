@@ -1,8 +1,8 @@
-// code7bit.cpp --- source code 7-bit converter
+// code7bit.cpp --- source code 8-bit cleaner
 // Copyright (C) 2018 Katayama Hirofumi MZ <katayama.hirofumi.mz@gmail.com>.
 // This file is public domain software.
 // ---
-// This program converts full 8-bit characters in the source file to
+// This program converts dirty 8-bit characters in the source file into
 // octal sequences "\OOO", and vice versa.
 //
 // NOTE: UTF-16 is not supported yet.
@@ -59,14 +59,17 @@ enum RET
 // show version info
 void show_version(void)
 {
-    std::cout <<  "code7bit version 1.2 by katahiromz" << std::endl;
+    std::cout <<  "code7bit version 1.3 by katahiromz" << std::endl;
 }
 
 // show help
 void show_help(void)
 {
     std::cout <<
-        "code7bit --- source code 7-bit converter\n"
+        "code7bit --- source code 8-bit cleaner\n"
+        "\n"
+        "This program converts dirty 8-bit characters in the source file into\n"
+        "octal sequences \"\\OOO\", and vice versa.\n"
         "\n"
         "Usage: code7bit [options] file.c ...\n"
         "Options:\n"
