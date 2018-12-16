@@ -41,11 +41,11 @@ const char g_utf16_le_bom[] = "\xFF\xFE";
 std::string g_strHeader1 =
     "// This file is converted by code7bit.\n"
     "// code7bit: https://github.com/katahiromz/code7bit\n"
-    "// To revert conversion, please execute code7bit -r <file>.\n";
+    "// To revert conversion, please execute \"code7bit -r <file>\".\n";
 std::string g_strHeader2 =
     "// This file is converted by code7bit.\r\n"
     "// code7bit: https://github.com/katahiromz/code7bit\r\n"
-    "// To revert conversion, please execute code7bit -r <file>.\r\n";
+    "// To revert conversion, please execute \"code7bit -r <file>\".\r\n";
 
 // return value
 enum RET
