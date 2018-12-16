@@ -26,8 +26,6 @@
     #include <getopt.h> // for GNU getopt_long
 #endif
 
-using std::exit;
-
 // global variables
 std::vector<std::string> g_files;
 bool g_do_convert = false;
@@ -112,11 +110,11 @@ int parse_command_line(int argc, char **argv)
         {
         case 'h':   // help
             show_help();
-            exit(EXIT_SUCCESS);
+            std::exit(EXIT_SUCCESS);
             break;
         case 'V':   // version
             show_version();
-            exit(EXIT_SUCCESS);
+            std::exit(EXIT_SUCCESS);
             break;
         case 'c':   // convert
             g_do_convert = true;
