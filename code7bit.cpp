@@ -26,6 +26,8 @@
     #include <getopt.h> // for GNU getopt_long
 #endif
 
+#define BACKUP_SUFFIX   ".bak"
+
 // global variables
 std::vector<std::string> g_files;
 bool g_do_convert = false;
@@ -193,7 +195,7 @@ bool fp_copy(FILE *fp1, FILE *fp2)
 bool do_backup(const char *file)
 {
     std::string backup_file = file;
-    backup_file += ".bak";
+    backup_file += BACKUP_SUFFIX;
 
 #ifdef _WIN32
     return !!CopyFileA(file, backup_file.c_str(), FALSE);
@@ -221,7 +223,7 @@ bool do_backup(const char *file)
 bool do_delete_backup(const char *file)
 {
     std::string backup_file = file;
-    backup_file += ".bak";
+    backup_file += BACKUP_SUFFIX;
 
     return _unlink(backup_file.c_str()) == 0;
 }
