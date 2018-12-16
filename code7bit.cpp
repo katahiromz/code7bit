@@ -33,9 +33,19 @@ bool g_do_reverse = false;
 bool g_do_test = false;
 bool g_verbose = false;
 bool g_backup = false;
+bool g_no_header = false;
 const char g_utf8_bom[] = "\xEF\xBB\xBF";
 const char g_utf16_be_bom[] = "\xFE\xFF";
 const char g_utf16_le_bom[] = "\xFF\xFE";
+
+std::string g_strHeader1 =
+    "// This file is converted by code7bit.\n"
+    "// code7bit: https://github.com/katahiromz/code7bit\n"
+    "// To revert conversion, please execute code7bit -r <file>.\n";
+std::string g_strHeader2 =
+    "// This file is converted by code7bit.\r\n"
+    "// code7bit: https://github.com/katahiromz/code7bit\r\n"
+    "// To revert conversion, please execute code7bit -r <file>.\r\n";
 
 // return value
 enum RET
@@ -49,7 +59,7 @@ void show_version(void)
 {
     std::cout << 
         "######################################\n"
-        "# code7bit version 0.9 by katahiromz #\n"
+        "# code7bit version 1.0 by katahiromz #\n"
         "######################################" << std::endl;
 }
 
@@ -67,7 +77,8 @@ void show_help(void)
         "-r                  Reverse conversion.\n"
         "-v                  Verbose mode.\n"
         "-b                  Create backup for file.\n"
-        "-t                  Do test only." << std::endl;
+        "-t                  Do test only.\n"
+        "-n                  No header added." << std::endl;
 }
 
 // option info for getopt_long
@@ -80,6 +91,7 @@ struct option opts[] =
     { "verbose", no_argument, NULL, 'v' },
     { "backup", no_argument, NULL, 'b' },
     { "test", no_argument, NULL, 't' },
+    { "no-header", no_argument, NULL, 'n' },
     { NULL, 0, NULL, 0 },
 };
 
@@ -130,6 +142,9 @@ int parse_command_line(int argc, char **argv)
             break;
         case 't':   // test
             g_do_test = true;
+            break;
+        case 'n':   // no header
+            g_no_header = true;
             break;
         default:
             switch (optopt)
@@ -300,6 +315,27 @@ bool do_convert(const char *file, std::string& contents, bool check_only, bool& 
         }
     }
 
+    // delete header
+    if (contents.size() >= g_strHeader1.size() &&
+        memcmp(&contents[0], &g_strHeader1[0], g_strHeader1.size()) == 0)
+    {
+        contents.erase(0, g_strHeader1.size());
+    }
+    else if (contents.size() >= g_strHeader2.size() &&
+             memcmp(&contents[0], &g_strHeader2[0], g_strHeader2.size()) == 0)
+    {
+        contents.erase(0, g_strHeader2.size());
+    }
+
+    // add header
+    if (!g_no_header)
+    {
+        if (contents.find("\r\n") != std::string::npos)
+            contents.insert(0, g_strHeader2);
+        else
+            contents.insert(0, g_strHeader1);
+    }
+
     // do backup
     if (g_backup && !do_backup(file))
     {
@@ -379,6 +415,18 @@ bool do_reverse(const char *file, std::string& contents, bool check_only, bool& 
     {
         contents.erase(0, 3);
         std::cerr << file << ": NOTICE: Deleted UTF-8 BOM." << std::endl;
+    }
+
+    // delete header
+    if (contents.size() >= g_strHeader1.size() &&
+        memcmp(&contents[0], &g_strHeader1[0], g_strHeader1.size()) == 0)
+    {
+        contents.erase(0, g_strHeader1.size());
+    }
+    else if (contents.size() >= g_strHeader2.size() &&
+             memcmp(&contents[0], &g_strHeader2[0], g_strHeader2.size()) == 0)
+    {
+        contents.erase(0, g_strHeader2.size());
     }
 
     // reverse conversion
