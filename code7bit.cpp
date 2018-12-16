@@ -116,7 +116,7 @@ int parse_command_line(int argc, char **argv)
         return RET_INVALID_ARGUMENT;
     }
 
-    while ((opt = getopt_long(argc, argv, "hVcrvbt", opts, &opt_index)) != -1)
+    while ((opt = getopt_long(argc, argv, "hVcrvbtn", opts, &opt_index)) != -1)
     {
         switch (opt)
         {
