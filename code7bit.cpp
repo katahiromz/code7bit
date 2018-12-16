@@ -49,7 +49,7 @@ void show_version(void)
 {
     std::cout << 
         "######################################\n"
-        "# code7bit version 0.3 by katahiromz #\n"
+        "# code7bit version 0.4 by katahiromz #\n"
         "######################################\n" << std::endl;
 }
 
@@ -109,12 +109,9 @@ int parse_command_line(int argc, char **argv)
         switch (opt)
         {
         case 0:
-            arg = opts[opt_index].name;
-            if (arg == "version")
-            {
-                show_version();
-                exit(EXIT_SUCCESS);
-            }
+            std::cerr << "ERROR: Invalid option." << std::endl;
+            show_help();
+            exit(EXIT_SUCCESS);
             break;
         case 'h':
             show_help();
