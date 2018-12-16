@@ -15,9 +15,11 @@
 #include <fstream>      // for std::ifstream and std::ofstream
 #include <streambuf>    // for std::istreambuf_iterator
 #include <io.h>         // for _unlink
+
 #ifdef _WIN32
     #include <windows.h>
 #endif
+
 #ifdef USE_GETOPT_PORT
     #include "getopt.h" // for portable getopt_long
 #else
