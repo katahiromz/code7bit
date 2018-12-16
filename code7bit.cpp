@@ -49,7 +49,7 @@ void show_version(void)
 {
     std::cout << 
         "######################################\n"
-        "# code7bit version 0.5 by katahiromz #\n"
+        "# code7bit version 0.6 by katahiromz #\n"
         "######################################" << std::endl;
 }
 
@@ -468,6 +468,12 @@ int do_it(void)
         {
             std::cout << "g_files[" << (int)i << "]: " << g_files[i] << std::endl;
         }
+    }
+
+    if (g_files.empty())
+    {
+        std::cerr << "ERROR: No files specified.\n";
+        return EXIT_FAILURE;
     }
 
     bool has_change = false;
