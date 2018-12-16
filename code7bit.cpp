@@ -12,7 +12,7 @@
 #include <string>       // for std::string
 #include <vector>       // for std::vector
 #include <iostream>     // for std::cout and std::cerr
-#include <fstream>      // for std::ifstream
+#include <fstream>      // for std::ifstream and std::ofstream
 #include <streambuf>    // for std::istreambuf_iterator
 #include <io.h>         // for _unlink
 #ifdef _WIN32
@@ -49,7 +49,7 @@ void show_version(void)
 {
     std::cout << 
         "######################################\n"
-        "# code7bit version 0.4 by katahiromz #\n"
+        "# code7bit version 0.5 by katahiromz #\n"
         "######################################\n" << std::endl;
 }
 
@@ -307,7 +307,7 @@ bool do_convert(const char *file, std::string& contents, bool check_only, bool& 
     }
 
     // write to file
-    std::ofstream ofs(file);
+    std::ofstream ofs(file, std::ios::out | std::ios::binary);
     if (!ofs.is_open())
     {
         std::cerr << "ERROR: Cannot open '" << file << "'." << std::endl;
@@ -413,7 +413,7 @@ bool do_reverse(const char *file, std::string& contents, bool check_only, bool& 
     }
 
     // write to file
-    std::ofstream ofs(file);
+    std::ofstream ofs(file, std::ios::out | std::ios::binary);
     if (!ofs.is_open())
     {
         std::cerr << "ERROR: Cannot open '" << file << "'." << std::endl;
@@ -430,7 +430,7 @@ bool do_reverse(const char *file, std::string& contents, bool check_only, bool& 
 
 bool do_file(const char *file, bool check_only, bool& has_change)
 {
-    std::ifstream ifs(file);
+    std::ifstream ifs(file, std::ios::in | std::ios::binary);
     if (!ifs.is_open())
     {
         std::cerr << "ERROR: Cannot open '" << file << "'." << std::endl;
