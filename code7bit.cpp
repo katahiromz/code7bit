@@ -170,7 +170,8 @@ int parse_command_line(int argc, char **argv)
     }
     if (!g_do_convert && !g_do_reverse && !g_do_test)
     {
-        std::cerr << "ERROR: Either '-c', '-r' or '-t' should be specified." << std::endl;
+        std::cerr << "ERROR: Either '-c', '-r' or '-t' should be specified."
+                  << std::endl;
         return RET_INVALID_ARGUMENT;
     }
 
@@ -184,7 +185,7 @@ int parse_command_line(int argc, char **argv)
         show_version();
         for (int i = 0; i < argc; ++i)
         {
-            std::cout << "argv[" << i << "]: " << argv[i] << std::endl;
+            std::cout << "argv[" << i << "]: '" << argv[i] << "'" << std::endl;
         }
     }
 
@@ -528,7 +529,8 @@ int do_it(void)
     {
         for (size_t i = 0; i < g_files.size(); ++i)
         {
-            std::cout << "g_files[" << (int)i << "]: " << g_files[i] << std::endl;
+            std::cout << "g_files[" << (int)i << "]: '" << g_files[i]
+                      << "'" << std::endl;
         }
     }
 
