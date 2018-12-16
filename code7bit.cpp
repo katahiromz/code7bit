@@ -7,13 +7,14 @@
 //
 // NOTE: UTF-16 is not supported yet.
 
+#define _CRT_SECURE_NO_WARNINGS
 #include <cstdio>       // standard C I/O
 #include <string>       // for std::string
 #include <vector>       // for std::vector
 #include <iostream>     // for std::cout and std::cerr
 #include <fstream>      // for std::ifstream
 #include <streambuf>    // for std::istreambuf_iterator
-#include <io.h>         // for unlink
+#include <io.h>         // for _unlink
 #ifdef _WIN32
     #include <windows.h>
 #endif
@@ -206,7 +207,7 @@ bool do_backup(const char *file)
     }
     if (!ok)
     {
-        unlink(backup_file.c_str());
+        _unlink(backup_file.c_str());
         std::cerr << file << ": ERROR: Cannot write backup file '"
                   << backup_file << "'." << std::endl;
     }
@@ -219,7 +220,7 @@ bool do_delete_backup(const char *file)
     std::string backup_file = file;
     backup_file += ".bak";
 
-    return unlink(backup_file.c_str()) == 0;
+    return _unlink(backup_file.c_str()) == 0;
 }
 
 // 8-bit ASCII to 7-bit ASCII
