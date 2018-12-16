@@ -223,7 +223,7 @@ bool do_delete_backup(const char *file)
 bool do_convert(const char *file, std::string& contents, bool check_only, bool& has_change)
 {
     // check BOM
-    bool has_utf8_bom = (contents.size() >= 3 && memcmp(&contents[0], &g_utf8_bom[0], 3) == 0);
+    bool has_utf8_bom = (contents.size() >= 3 && memcmp(&contents[0], g_utf8_bom, 3) == 0);
     bool has_utf16be_bom = (contents.size() >= 2 && memcmp(&contents[0], g_utf16_be_bom, 2) == 0);
     bool has_utf16le_bom = (contents.size() >= 2 && memcmp(&contents[0], g_utf16_le_bom, 2) == 0);
 
@@ -326,7 +326,7 @@ bool do_convert(const char *file, std::string& contents, bool check_only, bool& 
 bool do_reverse(const char *file, std::string& contents, bool check_only, bool& has_change)
 {
     // check BOM
-    bool has_utf8_bom = (contents.size() >= 3 && memcmp(&contents[0], &g_utf8_bom[0], 3) == 0);
+    bool has_utf8_bom = (contents.size() >= 3 && memcmp(&contents[0], g_utf8_bom, 3) == 0);
     bool has_utf16be_bom = (contents.size() >= 2 && memcmp(&contents[0], g_utf16_be_bom, 2) == 0);
     bool has_utf16le_bom = (contents.size() >= 2 && memcmp(&contents[0], g_utf16_le_bom, 2) == 0);
 
