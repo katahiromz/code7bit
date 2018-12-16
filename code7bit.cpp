@@ -1,4 +1,4 @@
-// code7bit.cpp --- source code 8-bit cleaner
+// code7bit.cpp --- source code dirty 8-bit characters converter
 // Copyright (C) 2018 Katayama Hirofumi MZ <katayama.hirofumi.mz@gmail.com>.
 // This file is public domain software.
 // ---
@@ -70,7 +70,7 @@ void show_version(void)
 void show_help(void)
 {
     std::cout <<
-        "code7bit --- source code 8-bit cleaner\n"
+        "code7bit --- source code dirty 8-bit characters converter\n"
         "\n"
         "This program converts dirty 8-bit characters in the source file into\n"
         "octal sequences \"\\OOO\", and vice versa.\n"
