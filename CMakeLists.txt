@@ -29,7 +29,7 @@ endif()
 #set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 
 # enable some languages
-#enable_language(C)
+enable_language(C)
 #enable_language(RC)
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL Clang)
