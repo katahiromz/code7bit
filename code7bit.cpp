@@ -185,7 +185,8 @@ int parse_command_line(int argc, char **argv)
         show_version();
         for (int i = 0; i < argc; ++i)
         {
-            std::cout << "argv[" << i << "]: '" << argv[i] << "'" << std::endl;
+            std::cout << "argv[" << i << "]: '" << argv[i]
+                      << "'" << std::endl;
         }
     }
 
