@@ -273,7 +273,7 @@ bool do_convert(const char *file, std::string& contents, bool check_only, bool& 
     }
     if (!has_target)
     {
-        std::cerr << file << ": No conversion." << std::endl;
+        std::cerr << file << ": No change." << std::endl;
         return true;
     }
     has_change = true;
@@ -366,7 +366,7 @@ bool do_reverse(const char *file, std::string& contents, bool check_only, bool& 
     }
     if (!has_target)
     {
-        std::cerr << file << ": No reverse." << std::endl;
+        std::cerr << file << ": No change." << std::endl;
         return true;
     }
     has_change = true;
