@@ -26,6 +26,7 @@
     #include <getopt.h> // for GNU getopt_long
 #endif
 
+// the backup suffix
 #define BACKUP_SUFFIX   ".bak"
 
 // global variables
@@ -36,10 +37,13 @@ bool g_do_test = false;
 bool g_verbose = false;
 bool g_backup = false;
 bool g_no_header = false;
-const char g_utf8_bom[] = "\xEF\xBB\xBF";
-const char g_utf16_be_bom[] = "\xFE\xFF";
-const char g_utf16_le_bom[] = "\xFF\xFE";
 
+// BOMs
+const char g_utf8_bom[] = "\xEF\xBB\xBF";   // UTF-8 BOM
+const char g_utf16_be_bom[] = "\xFE\xFF";   // UTF-16 BE BOM
+const char g_utf16_le_bom[] = "\xFF\xFE";   // UTF-16 LE BOM
+
+// the header
 std::string g_strHeaderLF =
     "// This file is converted by code7bit.\n"
     "// code7bit: https://github.com/katahiromz/code7bit\n"
