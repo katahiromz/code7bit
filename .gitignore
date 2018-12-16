@@ -1,7 +1,6 @@
 *.autosave
 *.cmake
 *.dir
-*.exe
 *.filters
 *.idb
 *.map
