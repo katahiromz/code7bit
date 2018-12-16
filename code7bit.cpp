@@ -48,9 +48,9 @@ enum RET
 void show_version(void)
 {
     std::cout << 
-        "########################\n"
-        "# code7bit version 0.0 #\n"
-        "########################\n" << std::endl;
+        "######################################\n"
+        "# code7bit version 0.1 by katahiromz #\n"
+        "######################################\n" << std::endl;
 }
 
 // show help
