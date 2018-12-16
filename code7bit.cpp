@@ -173,7 +173,7 @@ int parse_command_line(int argc, char **argv)
     return RET_SUCCESS;
 }
 
-bool fcopy(FILE *fp1, FILE *fp2)
+bool fp_copy(FILE *fp1, FILE *fp2)
 {
     char            buffer[512];
     size_t          n;
@@ -183,6 +183,7 @@ bool fcopy(FILE *fp1, FILE *fp2)
         if (fwrite(buffer, n, 1, fp2) == 0)
             return false;
     }
+    return true;
 }
 
 bool do_backup(const char *file)
@@ -198,7 +199,7 @@ bool do_backup(const char *file)
     {
         if (FILE *fp2 = fopen(backup_file.c_str(), "wb"))
         {
-            ok = fcopy(fp1, fp2);
+            ok = fp_copy(fp1, fp2);
             fclose(fp2);
         }
         fclose(fp1);
