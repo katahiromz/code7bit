@@ -17,7 +17,10 @@
 #include <streambuf>    // for std::istreambuf_iterator
 #include <io.h>         // for _unlink
 #include <clocale>      // for std::setlocale
-#include <windows.h>
+
+#ifdef _WIN32
+    #include <windows.h>
+#endif
 
 #ifdef USE_GETOPT_PORT
     #include "getopt.h" // for portable getopt_long
