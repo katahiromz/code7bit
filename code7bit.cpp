@@ -466,6 +466,7 @@ bool do_convert(const char *file, std::string& contents, bool check_only, bool& 
             {
             case '"':
                 in_quote = true;
+                unicode = false;
                 break;
             case 'L':
                 if (contents[i + 1] == '"')
@@ -501,7 +502,10 @@ bool do_convert(const char *file, std::string& contents, bool check_only, bool& 
             }
         }
         if (contents[i] == '\n')
+        {
+            unicode = in_quote = false;
             ++line;
+        }
     }
 
     // delete header
