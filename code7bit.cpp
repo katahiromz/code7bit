@@ -65,7 +65,7 @@ enum RET
 // show version info
 void show_version(void)
 {
-    std::cout <<  "code7bit version 1.4 " __DATE__ " by katahiromz" << std::endl;
+    std::cout <<  "code7bit version 1.5 " __DATE__ " by katahiromz" << std::endl;
 }
 
 // show help
@@ -443,10 +443,7 @@ bool do_convert(const char *file, std::string& contents, bool check_only, bool& 
             switch (contents[i])
             {
             case '\\':
-                if (contents[i + 1] == '"')
-                {
-                    ++i;
-                }
+                ++i;
                 break;
             case '"':
                 if (contents[i + 1] == '"')
@@ -503,6 +500,11 @@ bool do_convert(const char *file, std::string& contents, bool check_only, bool& 
         }
         if (contents[i] == '\n')
         {
+            if (in_quote)
+            {
+                std::cerr << file << " (" << line
+                          << "): WARNING: Newline without ending quote." << std::endl;
+            }
             unicode = in_quote = false;
             ++line;
         }
