@@ -3,22 +3,21 @@
 // This file is public domain software.
 // ---
 // This program converts dirty 8-bit characters in the source file into
-// octal sequences "\OOO", and vice versa.
+// octal sequences "\OOO" or "\uXXXX", and vice versa.
 //
 // NOTE: UTF-16 is not supported yet.
 
 #define _CRT_SECURE_NO_WARNINGS
-#include <cstdio>       // standard C I/O
+#include <cstdlib>      // standard C library
+#include <cstdio>       // standard I/O
 #include <string>       // for std::string
 #include <vector>       // for std::vector
 #include <iostream>     // for std::cout and std::cerr
 #include <fstream>      // for std::ifstream and std::ofstream
 #include <streambuf>    // for std::istreambuf_iterator
 #include <io.h>         // for _unlink
-
-#ifdef _WIN32
-    #include <windows.h>
-#endif
+#include <clocale>      // for std::setlocale
+#include <windows.h>
 
 #ifdef USE_GETOPT_PORT
     #include "getopt.h" // for portable getopt_long
@@ -63,7 +62,7 @@ enum RET
 // show version info
 void show_version(void)
 {
-    std::cout <<  "code7bit version 1.3 " __DATE__ " by katahiromz" << std::endl;
+    std::cout <<  "code7bit version 1.4 " __DATE__ " by katahiromz" << std::endl;
 }
 
 // show help
@@ -73,7 +72,7 @@ void show_help(void)
         "code7bit --- source code dirty 8-bit characters converter\n"
         "\n"
         "This program converts dirty 8-bit characters in the source file into\n"
-        "octal sequences \"\\OOO\", and vice versa.\n"
+        "octal sequences \"\\OOO\" or \"\\uXXXX\", and vice versa.\n"
         "\n"
         "Usage: code7bit [options] file.c ...\n"
         "Options:\n"
@@ -251,6 +250,102 @@ inline bool is_octal(char ch)
     return '0' <= ch && ch <= '7';
 }
 
+inline bool is_xdigit(char ch)
+{
+    return ('0' <= ch && ch <= '9') ||
+           ('a' <= ch && ch <= 'f') ||
+           ('A' <= ch && ch <= 'F');
+}
+
+inline int hex_to_num(char ch)
+{
+    if ('0' <= ch && ch <= '9')
+        return ch - '0';
+    if ('a' <= ch && ch <= 'f')
+        return ch - 'a' + 10;
+    if ('A' <= ch && ch <= 'F')
+        return ch - 'A' + 10;
+    return 0;
+}
+
+inline int utf8_next(const char *pch)
+{
+    char ch = *pch;
+    if (ch == 0)
+        return 0;
+    if ((ch & 0x80) == 0)
+        return 1;
+    if ((ch & 0xE0) == 0xC0)
+        return 2;
+    if ((ch & 0xF0) == 0xE0)
+        return 3;
+    if ((ch & 0xF8) == 0xF0)
+        return 4;
+    return -1;
+}
+
+bool utf8_getch(const char *pch, wchar_t& wch, int& len)
+{
+    char ch = *pch;
+    len = utf8_next(pch);
+    if (len <= 0)
+        return false;
+
+    switch (len)
+    {
+    case 1:
+        wch = (ch & 0x7F);
+        return true;
+    case 2:
+        wch = ((ch & 0x1F) << 6) | (pch[1] & 0x3F);
+        return true;
+    case 3:
+        wch = ((ch & 0x0F) << 12) | ((pch[1] & 0x3F) << 6) | (pch[2] & 0x3F);
+        return true;
+    case 4:
+        wch = ((ch & 0x03) << 18) | ((pch[1] & 0x3F) << 12) | ((pch[2] & 0x3F) << 6) | (pch[3] & 0x3F);
+        return true;
+    }
+
+    return false;
+}
+
+bool utf8_setch(char *pch, wchar_t wch, int& len)
+{
+    if (0 <= wch && wch <= 0x007F)
+    {
+        len = 1;
+        *pch = (char)wch;
+        return true;
+    }
+    if (0x0080 <= wch && wch <= 0x07FF)
+    {
+        len = 2;
+        *pch++ = (char)(((wch >> 6) & 0x1F) | 0xC0);
+        *pch = (char)((wch & 0x3F) | 0x80);
+        return true;
+    }
+    if (0x0800 <= wch && wch <= 0x0FFF)
+    {
+        len = 3;
+        *pch++ = (char)(((wch >> 12) & 0x0F) | 0xE0);
+        *pch++ = (char)(((wch >> 6) & 0x3F) | 0x80);
+        *pch = (char)((wch & 0x3F) | 0x80);
+        return true;
+    }
+    if (0x10000 <= wch && wch <= 0x10FFFF)
+    {
+        len = 4;
+        *pch++ = (char)(((wch >> 18) & 0x07) | 0xF0);
+        *pch++ = (char)(((wch >> 12) & 0x3F) | 0x80);
+        *pch++ = (char)(((wch >> 6) & 0x3F) | 0x80);
+        *pch = (char)((wch & 0x3F) | 0x80);
+        return true;
+    }
+
+    return false;
+}
+
 // 8-bit ASCII to 7-bit ASCII
 bool do_convert(const char *file, std::string& contents, bool check_only, bool& has_change)
 {
@@ -279,6 +374,7 @@ bool do_convert(const char *file, std::string& contents, bool check_only, bool& 
     // already has octal sequence?
     if (contents.size() > 4)
     {
+        size_t line = 1;
         for (size_t i = 0; i < contents.size() - 4; ++i)
         {
             // find "\OOO"
@@ -287,9 +383,23 @@ bool do_convert(const char *file, std::string& contents, bool check_only, bool& 
                 is_octal(contents[i + 2]) &&
                 is_octal(contents[i + 3]))
             {
-                std::cerr << file << ": ERROR: Already has octal sequence." << std::endl;
+                std::cerr << file << " (" << line
+                          << "): ERROR: Already has octal sequence." << std::endl;
                 return false;
             }
+            if (contents[i] == '\\' &&
+                contents[i + 1] == 'u' &&
+                is_xdigit(contents[i + 2]) &&
+                is_xdigit(contents[i + 3]) &&
+                is_xdigit(contents[i + 4]) &&
+                is_xdigit(contents[i + 5]))
+            {
+                std::cerr << file << " (" << line
+                          << "): ERROR: Already has \\uXXXX sequence." << std::endl;
+                break;
+            }
+            if (contents[i] == '\n')
+                ++line;
         }
     }
 
@@ -320,16 +430,75 @@ bool do_convert(const char *file, std::string& contents, bool check_only, bool& 
         std::cerr << file << ": NOTICE: Deleted UTF-8 BOM." << std::endl;
     }
 
-    // convert extended codes into "\\%03o"
+    // convert extended codes into "\\%03o" or "\uXXXX"
+    bool in_quote = false, unicode = false;
+    size_t line = 1;
     for (size_t i = 0; i < contents.size(); ++i)
     {
+        if (in_quote)
+        {
+            switch (contents[i])
+            {
+            case '\\':
+                if (contents[i + 1] == '"')
+                {
+                    ++i;
+                }
+                break;
+            case '"':
+                if (contents[i + 1] == '"')
+                {
+                    ++i;
+                }
+                else
+                {
+                    unicode = in_quote = false;
+                }
+                break;
+            }
+        }
+        else
+        {
+            switch (contents[i])
+            {
+            case '"':
+                in_quote = true;
+                break;
+            case 'L':
+                if (contents[i + 1] == '"')
+                {
+                    ++i;
+                    in_quote = unicode = true;
+                }
+                break;
+            }
+        }
         if (contents[i] & 0x80)
         {
             char buf[8];
-            std::sprintf(buf, "\\%03o", (int)(unsigned char)contents[i]);
-            contents.replace(i, 1, std::string(buf));
-            i += 4 - 1;
+            if (unicode)
+            {
+                wchar_t wch;
+                int len;
+                if (!utf8_getch(&contents[i], wch, len))
+                {
+                    std::cerr << file << " (" << line
+                              << "): ERROR: Invalid UTF-8 code." << std::endl;
+                    return false;
+                }
+                std::sprintf(buf, "\\u%04X", wch);
+                contents.replace(i, len, std::string(buf));
+                i += 6 - 1;
+            }
+            else
+            {
+                std::sprintf(buf, "\\%03o", (int)(unsigned char)contents[i]);
+                contents.replace(i, 1, std::string(buf));
+                i += 4 - 1;
+            }
         }
+        if (contents[i] == '\n')
+            ++line;
     }
 
     // delete header
@@ -409,11 +578,21 @@ bool do_reverse(const char *file, std::string& contents, bool check_only, bool& 
     {
         for (size_t i = 0; i < contents.size() - 4; ++i)
         {
-            // find "\OOO"
+            // find "\OOO" or "\uXXXX"
             if (contents[i] == '\\' &&
                 is_octal(contents[i + 1]) &&
                 is_octal(contents[i + 2]) &&
                 is_octal(contents[i + 3]))
+            {
+                has_target = true;
+                break;
+            }
+            if (contents[i] == '\\' &&
+                contents[i + 1] == 'u' &&
+                is_xdigit(contents[i + 2]) &&
+                is_xdigit(contents[i + 3]) &&
+                is_xdigit(contents[i + 4]) &&
+                is_xdigit(contents[i + 5]))
             {
                 has_target = true;
                 break;
@@ -452,6 +631,7 @@ bool do_reverse(const char *file, std::string& contents, bool check_only, bool& 
     // reverse conversion
     if (contents.size() > 4)
     {
+        size_t line = 1;
         for (size_t i = 0; i < contents.size() - 4; ++i)
         {
             // find "\OOO"
@@ -470,6 +650,31 @@ bool do_reverse(const char *file, std::string& contents, bool check_only, bool& 
                 contents.replace(i, 4, str);
                 if (!((i + 1) + 4 < contents.size()))
                     break;
+            }
+            if (contents[i] == '\\' &&
+                contents[i + 1] == 'u' &&
+                is_xdigit(contents[i + 2]) &&
+                is_xdigit(contents[i + 3]) &&
+                is_xdigit(contents[i + 4]) &&
+                is_xdigit(contents[i + 5]))
+            {
+                wchar_t wch = hex_to_num(contents[i + 2]);
+                wch <<= 4;
+                wch |= hex_to_num(contents[i + 3]);
+                wch <<= 4;
+                wch |= hex_to_num(contents[i + 4]);
+                wch <<= 4;
+                wch |= hex_to_num(contents[i + 5]);
+
+                char buf[16];
+                int len;
+                if (!utf8_setch(buf, wch, len))
+                {
+                    std::cerr << file << " (" << line
+                              << "): ERROR: Invalid Unicode code." << std::endl;
+                    return false;
+                }
+                contents.replace(i, 6, std::string(buf, len));
             }
         }
     }
