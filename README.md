@@ -1,5 +1,7 @@
 # code7bit by katahiromz
 
+## What's this?
+
 This tool is dirty 8-bit characters converter.
 
 This tool converts dirty 8-bit characters into 3-digit octal
@@ -13,5 +15,7 @@ If a dirty character exists out of `L"..."`, then it will
 be converted to a 3-digit octal escape sequence.
 
 For more details, execute `code7bit --help`.
+
+## Contact
 
 katayama.hirofumi.mz@gmail.com
