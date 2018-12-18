@@ -232,7 +232,11 @@ bool do_backup(const char *file)
     }
     if (!ok)
     {
+#ifdef _WIN32
+        DeleteFileA(backup_file.c_str());
+#else
         _unlink(backup_file.c_str());
+#endif
         std::cerr << file << ": ERROR: Cannot write backup file '"
                   << backup_file << "'." << std::endl;
     }
@@ -245,7 +249,11 @@ bool do_delete_backup(const char *file)
     std::string backup_file = file;
     backup_file += BACKUP_SUFFIX;
 
+#ifdef _WIN32
+    return !!DeleteFileA(backup_file.c_str());
+#else
     return _unlink(backup_file.c_str()) == 0;
+#endif
 }
 
 inline bool is_octal(char ch)
