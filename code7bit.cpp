@@ -6,7 +6,6 @@
 // octal sequences "\OOO" or "\uXXXX", and vice versa.
 //
 // NOTE: UTF-16 is not supported yet.
-
 #define _CRT_SECURE_NO_WARNINGS
 #include <cstdlib>      // standard C library
 #include <cstdio>       // standard I/O
@@ -167,6 +166,7 @@ bool parse_command_line(int argc, char **argv)
         std::cerr << "ERROR: '-c' and '-r' are exclusive." << std::endl;
         return false;
     }
+
     if (!g_do_convert && !g_do_reverse && !g_do_test)
     {
         std::cerr << "ERROR: Either '-c', '-r' or '-t' should be specified."
