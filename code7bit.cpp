@@ -65,7 +65,7 @@ enum RET
 // show version info
 void show_version(void)
 {
-    std::cout <<  "code7bit version 1.7 " __DATE__ " by katahiromz" << std::endl;
+    std::cout <<  "code7bit version 1.8 " __DATE__ " by katahiromz" << std::endl;
 }
 
 // show help
