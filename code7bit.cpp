@@ -314,7 +314,8 @@ bool utf8_getch(const char *pch, unsigned int& wch, int& len)
         wch = ((ch & 0x0F) << 12) | ((pch[1] & 0x3F) << 6) | (pch[2] & 0x3F);
         return true;
     case 4:
-        wch = ((ch & 0x03) << 18) | ((pch[1] & 0x3F) << 12) | ((pch[2] & 0x3F) << 6) | (pch[3] & 0x3F);
+        wch = ((ch & 0x03) << 18) | ((pch[1] & 0x3F) << 12) | \
+              ((pch[2] & 0x3F) << 6) | (pch[3] & 0x3F);
         return true;
     }
 
@@ -524,7 +525,9 @@ bool convert_to_octal(std::string& contents, size_t i,
     return true;
 }
 
-bool do_convert_contents(const char *file, std::string& contents, bool reverse, bool& has_change)
+bool
+do_convert_contents(const char *file, std::string& contents,
+                    bool reverse, bool& has_change)
 {
     size_t line = 1;
     enum MODE
@@ -539,7 +542,8 @@ bool do_convert_contents(const char *file, std::string& contents, bool reverse, 
         const char *psz = contents.c_str();
         bool check_raw = false;
 
-        //std::cout << line << ": " << mode << ":" << psz[i] << ":" << check_raw << std::endl;
+        //std::cout << line << ": " << mode << ":" <<
+        //             psz[i] << ":" << check_raw << std::endl;
 
         if (mode == MODE_C_COMMENT)   // in C-style comment
         {
