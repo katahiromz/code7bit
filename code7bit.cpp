@@ -55,13 +55,6 @@ std::string g_strHeaderCRLF =
     "// code7bit: https://github.com/katahiromz/code7bit\r\n"
     "// To revert conversion, please execute \"code7bit -r <file>\".\r\n";
 
-// return value
-enum RET
-{
-    RET_SUCCESS = 0,
-    RET_INVALID_ARGUMENT
-};
-
 // show version info
 void show_version(void)
 {
@@ -111,7 +104,7 @@ extern "C"
 }
 
 // parse the command line
-int parse_command_line(int argc, char **argv)
+bool parse_command_line(int argc, char **argv)
 {
     int opt, opt_index;
     std::string arg;
@@ -121,7 +114,7 @@ int parse_command_line(int argc, char **argv)
     if (argc <= 1)
     {
         std::cerr << "ERROR: No arguments. Try with --help." << std::endl;
-        return RET_INVALID_ARGUMENT;
+        return false;
     }
 
     while ((opt = getopt_long(argc, argv, "hVcrvbtn", opts, &opt_index)) != -1)
@@ -165,20 +158,20 @@ int parse_command_line(int argc, char **argv)
                           << "'." << std::endl;
                 break;
             }
-            return RET_INVALID_ARGUMENT;
+            return false;
         }
     }
 
     if (g_do_convert && g_do_reverse)
     {
         std::cerr << "ERROR: '-c' and '-r' are exclusive." << std::endl;
-        return RET_INVALID_ARGUMENT;
+        return false;
     }
     if (!g_do_convert && !g_do_reverse && !g_do_test)
     {
         std::cerr << "ERROR: Either '-c', '-r' or '-t' should be specified."
                   << std::endl;
-        return RET_INVALID_ARGUMENT;
+        return false;
     }
 
     for (int i = optind; i < argc; ++i)
@@ -196,7 +189,7 @@ int parse_command_line(int argc, char **argv)
         }
     }
 
-    return RET_SUCCESS;
+    return true;
 }
 
 bool fp_copy(FILE *fp1, FILE *fp2)
@@ -1030,7 +1023,7 @@ int do_it(void)
 
 int main(int argc, char **argv)
 {
-    if (int ret = parse_command_line(argc, argv))
+    if (!parse_command_line(argc, argv))
         return EXIT_FAILURE;
 
     return do_it();
