@@ -364,7 +364,8 @@ bool convert_3digit_octal_sequence(std::string& contents, size_t i,
                                    const char *file, size_t line)
 {
     assert(contents[i] == '\\');
-    char ch = contents[i + 1] - '0';
+    char ch;
+    ch = contents[i + 1] - '0';
     ch <<= 3;
     ch |= contents[i + 2] - '0';
     ch <<= 3;
