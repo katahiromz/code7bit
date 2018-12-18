@@ -303,7 +303,7 @@ bool utf8_getch(const char *pch, unsigned int& wch, int& len)
         wch = ((ch & 0x0F) << 12) | ((pch[1] & 0x3F) << 6) | (pch[2] & 0x3F);
         return true;
     case 4:
-        wch = ((ch & 0x03) << 18) | ((pch[1] & 0x3F) << 12) | \
+        wch = ((ch & 0x03) << 18) | ((pch[1] & 0x3F) << 12) |
               ((pch[2] & 0x3F) << 6) | (pch[3] & 0x3F);
         return true;
     }
