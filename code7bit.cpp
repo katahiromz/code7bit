@@ -57,7 +57,7 @@ std::string g_strHeaderCRLF =
 // show version info
 void show_version(void)
 {
-    std::cout <<  "code7bit version 1.8 " __DATE__ " by katahiromz" << std::endl;
+    std::cout <<  "code7bit version 1.9 " __DATE__ " by katahiromz" << std::endl;
 }
 
 // show help
@@ -479,7 +479,7 @@ bool convert_8digit_ucn_sequence(std::string& contents, size_t& i,
     return true;
 }
 
-bool convert_utf8_chars(std::string& contents, size_t i,
+bool convert_utf8_chars(std::string& contents, size_t& i,
                         const char *file, size_t line)
 {
     int len;
@@ -506,15 +506,17 @@ bool convert_utf8_chars(std::string& contents, size_t i,
     }
 
     contents.replace(i, len, std::string(buf));
+    i += strlen(buf) - 1;
     return true;
 }
 
-bool convert_to_octal(std::string& contents, size_t i,
+bool convert_to_octal(std::string& contents, size_t& i,
                       const char *file, size_t line)
 {
     char buf[16];
     std::sprintf(buf, "\\%03o", (int)(unsigned char)contents[i]);
     contents.replace(i, 1, std::string(buf));
+    i += strlen(buf) - 1;
     return true;
 }
 
