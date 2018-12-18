@@ -225,11 +225,7 @@ bool do_backup(const char *file)
     }
     if (!ok)
     {
-#ifdef _WIN32
-        DeleteFileA(backup_file.c_str());
-#else
         _unlink(backup_file.c_str());
-#endif
         std::cerr << file << ": ERROR: Cannot write backup file '"
                   << backup_file << "'." << std::endl;
     }
