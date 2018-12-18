@@ -559,6 +559,7 @@ do_convert_contents(const char *file, std::string& contents,
         {
             if (reverse && (psz[i] & 0x80))
             {
+                // non-clean character found!
                 std::cerr << file << " (" << line
                           << "): ERROR: Already non-clean character exists "
                              "in single quote. Unable to revert."
@@ -661,6 +662,7 @@ do_convert_contents(const char *file, std::string& contents,
         {
             if (reverse && (psz[i] & 0x80))
             {
+                // non-clean character found!
                 std::cerr << file << " (" << line
                           << "): ERROR: Already non-clean character exists "
                              "in double quote. Unable to revert."
@@ -810,7 +812,7 @@ do_convert_contents(const char *file, std::string& contents,
             }
         }
 
-        if (check_raw && (psz[i] & 0x80))
+        if (check_raw && (psz[i] & 0x80))   // found non-clean character!
         {
             has_change = true;
             if (unicode)
@@ -825,7 +827,7 @@ do_convert_contents(const char *file, std::string& contents,
             }
         }
 
-        if (contents[i] == '\n')
+        if (contents[i] == '\n')    // newline
         {
             ++line;
             if (mode == MODE_CXX_COMMENT)
