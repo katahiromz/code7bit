@@ -567,7 +567,7 @@ do_convert_contents(const char *file, std::string& contents,
             }
             if (psz[i] == '\\')
             {
-                if (reverse)
+                if (reverse)    // reverse conversion
                 {
                     if (unicode)
                     {
@@ -587,10 +587,11 @@ do_convert_contents(const char *file, std::string& contents,
                         }
                         else
                         {
+                            // skip escaped character
                             ++i;
                         }
                     }
-                    else
+                    else    // non-Unicode
                     {
                         if (is_3digit_octal_sequence(contents, i))
                         {
@@ -600,11 +601,12 @@ do_convert_contents(const char *file, std::string& contents,
                         }
                         else
                         {
+                            // skip escaped character
                             ++i;
                         }
                     }
                 }
-                else
+                else    // normal conversion
                 {
                     if (unicode)
                     {
@@ -624,9 +626,10 @@ do_convert_contents(const char *file, std::string& contents,
                                       << std::endl;
                             return false;
                         }
+                        // skip escaped character
                         ++i;
                     }
-                    else
+                    else    // non-Unicode
                     {
                         if (is_3digit_octal_sequence(contents, i))
                         {
@@ -638,6 +641,7 @@ do_convert_contents(const char *file, std::string& contents,
                         }
                         else
                         {
+                            // skip escaped character
                             ++i;
                         }
                     }
@@ -648,7 +652,7 @@ do_convert_contents(const char *file, std::string& contents,
                 unicode = false;
                 mode = MODE_INITIAL;
             }
-            else
+            else if (psz[i] & 0x80)
             {
                 check_raw = true;
             }
@@ -665,7 +669,7 @@ do_convert_contents(const char *file, std::string& contents,
             }
             if (psz[i] == '\\')
             {
-                if (reverse)
+                if (reverse)    // reverse conversion
                 {
                     if (unicode)
                     {
@@ -682,7 +686,7 @@ do_convert_contents(const char *file, std::string& contents,
                                 return false;
                         }
                     }
-                    else
+                    else    // non-Unicode
                     {
                         if (is_3digit_octal_sequence(contents, i))
                         {
@@ -692,11 +696,12 @@ do_convert_contents(const char *file, std::string& contents,
                         }
                         else
                         {
+                            // skip escaped character
                             ++i;
                         }
                     }
                 }
-                else
+                else    // normal conversion
                 {
                     if (unicode)
                     {
@@ -718,10 +723,11 @@ do_convert_contents(const char *file, std::string& contents,
                         }
                         else
                         {
+                            // skip escaped character
                             ++i;
                         }
                     }
-                    else
+                    else    // non-Unicode
                     {
                         if (is_3digit_octal_sequence(contents, i))
                         {
@@ -733,6 +739,7 @@ do_convert_contents(const char *file, std::string& contents,
                         }
                         else
                         {
+                            // skip escaped character
                             ++i;
                         }
                     }
@@ -742,6 +749,7 @@ do_convert_contents(const char *file, std::string& contents,
             {
                 if (psz[i + 1] == '"')
                 {
+                    // double double quotation!
                     ++i;
                 }
                 else
@@ -802,32 +810,18 @@ do_convert_contents(const char *file, std::string& contents,
             }
         }
 
-        if (check_raw)
+        if (check_raw && (psz[i] & 0x80))
         {
-            if (psz[i] & 0x80)
+            has_change = true;
+            if (unicode)
             {
-                if (reverse)
-                {
-                    std::cerr << file << " (" << line
-                              << "): ERROR: Already non-clean character exists "
-                                 "in single quote. Unablet to revert."
-                              << std::endl;
+                if (!convert_utf8_chars(contents, i, file, line))
                     return false;
-                }
-                else
-                {
-                    has_change = true;
-                    if (unicode)
-                    {
-                        if (!convert_utf8_chars(contents, i, file, line))
-                            return false;
-                    }
-                    else
-                    {
-                        if (!convert_to_octal(contents, i, file, line))
-                            return false;
-                    }
-                }
+            }
+            else
+            {
+                if (!convert_to_octal(contents, i, file, line))
+                    return false;
             }
         }
 
