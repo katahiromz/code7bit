@@ -826,19 +826,21 @@ do_convert_contents(const char *file, std::string& contents,
 
         if (contents[i] == '\n')    // newline
         {
-            ++line;
             switch (mode)
             {
             case MODE_CXX_COMMENT:
                 mode = MODE_INITIAL;
                 break;
             case MODE_DOUBLE_QUOTE:
-                std::cerr << file << ": ERROR: Found newline in double quotation." << std::endl;
+                std::cerr << file << " (" << line
+                          << "): ERROR: Found newline in double quotation." << std::endl;
                 return false;
             case MODE_SINGLE_QUOTE:
-                std::cerr << file << ": ERROR: Found newline in single quotation." << std::endl;
+                std::cerr << file << " (" << line
+                          << "): ERROR: Found newline in single quotation." << std::endl;
                 return false;
             }
+            ++line;
         }
     }
 
