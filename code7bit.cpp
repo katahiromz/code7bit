@@ -57,7 +57,7 @@ std::string g_strHeaderCRLF =
 // show version info
 void show_version(void)
 {
-    std::cout <<  "code7bit version 1.9 " __DATE__ " by katahiromz" << std::endl;
+    std::cout <<  "code7bit version 2.0 " __DATE__ " by katahiromz" << std::endl;
 }
 
 // show help
@@ -827,8 +827,18 @@ do_convert_contents(const char *file, std::string& contents,
         if (contents[i] == '\n')    // newline
         {
             ++line;
-            if (mode == MODE_CXX_COMMENT)
+            switch (mode)
+            {
+            case MODE_CXX_COMMENT:
                 mode = MODE_INITIAL;
+                break;
+            case MODE_DOUBLE_QUOTE:
+                std::cerr << file << ": ERROR: Found newline in double quotation." << std::endl;
+                return false;
+            case MODE_SINGLE_QUOTE:
+                std::cerr << file << ": ERROR: Found newline in single quotation." << std::endl;
+                return false;
+            }
         }
     }
 
@@ -837,6 +847,28 @@ do_convert_contents(const char *file, std::string& contents,
 
 bool do_convert(const char *file, std::string& contents, bool reverse, bool check_only, bool& has_change)
 {
+    // check file extension
+    static const char *extensions[] =
+    {
+        ".c", ".h", ".cxx", ".cpp", ".cc", ".hh", ".hxx", ".hpp",
+        ".C", ".H", ".CXX", ".CPP", ".CC", ".HH", ".HXX", ".HPP",
+    };
+    bool extension_found = false;
+    for (size_t i = 0; i < sizeof(extensions) / sizeof(extensions[0]); ++i)
+    {
+        char *pch = strstr(file, extensions[i]);
+        if (pch != NULL && strlen(pch) == strlen(extensions[i]))
+        {
+            extension_found = true;
+            break;
+        }
+    }
+    if (!extension_found)
+    {
+        std::cerr << file << ": Extension is non C/C++. Ignored." << std::endl;
+        return true;
+    }
+
     // check BOM
     bool has_utf8_bom = (contents.size() >= 3 && memcmp(&contents[0], g_utf8_bom, 3) == 0);
     bool has_utf16be_bom = (contents.size() >= 2 && memcmp(&contents[0], g_utf16_be_bom, 2) == 0);
@@ -877,7 +909,7 @@ bool do_convert(const char *file, std::string& contents, bool reverse, bool chec
     if (has_utf8_bom)
     {
         contents.erase(0, 3);
-        std::cerr << file << ": NOTICE: Deleted UTF-8 BOM." << std::endl;
+        std::cerr << file << ": Deleted UTF-8 BOM." << std::endl;
     }
 
     // delete header
