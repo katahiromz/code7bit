@@ -57,7 +57,7 @@ std::string g_strHeaderCRLF =
 // show version info
 void show_version(void)
 {
-    std::cout <<  "code7bit version 2.0 " __DATE__ " by katahiromz" << std::endl;
+    std::cout <<  "code7bit version 2.1 " __DATE__ " by katahiromz" << std::endl;
 }
 
 // show help
@@ -608,6 +608,7 @@ do_convert_contents(const char *file, std::string& contents,
                 {
                     if (unicode)
                     {
+#if 0
                         if (is_4digit_ucn_sequence(contents, i))
                         {
                             std::cerr << file << " (" << line
@@ -624,11 +625,13 @@ do_convert_contents(const char *file, std::string& contents,
                                       << std::endl;
                             return false;
                         }
+#endif
                         // skip escaped character
                         ++i;
                     }
                     else    // non-Unicode
                     {
+#if 0
                         if (is_3digit_octal_sequence(contents, i))
                         {
                             std::cerr << file << " (" << line
@@ -638,6 +641,7 @@ do_convert_contents(const char *file, std::string& contents,
                             return false;
                         }
                         else
+#endif
                         {
                             // skip escaped character
                             ++i;
@@ -704,6 +708,7 @@ do_convert_contents(const char *file, std::string& contents,
                 {
                     if (unicode)
                     {
+#if 0
                         if (is_4digit_ucn_sequence(contents, i))
                         {
                             std::cerr << file << " (" << line
@@ -721,6 +726,7 @@ do_convert_contents(const char *file, std::string& contents,
                             return false;
                         }
                         else
+#endif
                         {
                             // skip escaped character
                             ++i;
@@ -728,6 +734,7 @@ do_convert_contents(const char *file, std::string& contents,
                     }
                     else    // non-Unicode
                     {
+#if 0
                         if (is_3digit_octal_sequence(contents, i))
                         {
                             std::cerr << file << " (" << line
@@ -737,6 +744,7 @@ do_convert_contents(const char *file, std::string& contents,
                             return false;
                         }
                         else
+#endif
                         {
                             // skip escaped character
                             ++i;
